@@ -51,7 +51,7 @@ The project compared multiple model iterations, with the most successful configu
 
 The model predicts a fluctuating trend for 2024, with total attendances remaining stable but wait-time performance projected to stay below pre-pandemic levels.
 
-| **Metric**            | **Adjusted R2** | **Deviance Explained** |
+| **Metric**            | **Adjusted $R^2$** | **Deviance Explained** |
 | --------------------- | --------------- | ---------------------- |
 | **Total Attendances** | 0.897           | 90.9%                  |
 | **Wait-Time % (<4h)** | 0.958           | 96.1%                  |
