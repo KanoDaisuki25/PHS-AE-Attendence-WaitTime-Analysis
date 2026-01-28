@@ -1,6 +1,6 @@
 # Scotland A&E Attendances & Wait-Time Forecasting (2007–2024)
 
-## Project Overview
+## Overview
 This project investigates the monthly demand and performance of Accident and Emergency (A&E) departments across Scotland. Following the 2007 Scottish Government national standard, 95% of patients should be seen within four hours. This analysis uses **Generalised Additive Models (GAMs)** to decompose seasonal trends, account for COVID-19 disruptions, and provide 6-month forecasts.
 
 ## Key Achievements
@@ -28,7 +28,7 @@ The analysis was performed in **R** using the following ecosystem:
 - **Visualisation**: `ggplot2`, `gratia` (GAM-specific plots), `cowplot`.
 
 
-- **Data Source**: Open data from **Public Health Scotland (PHS)**.
+- **Data Source**: Open data from [**Public Health Scotland (PHS)**](https://www.opendata.nhs.scot/dataset/monthly-accident-and-emergency-activity-and-waiting-times/resource/37ba17b1-c323-492c-87d5-e986aae9ab59?inner_span=True)
 
 
 
@@ -57,10 +57,10 @@ The model predicts a fluctuating trend for 2024, with total attendances remainin
 | **Wait-Time % (<4h)** | 0.958           | 96.1%                  |
 
 
-## Repository Structure
+## Repo Structure
 
-- `/code`: R scripts for data cleaning, EDA, and GAM fitting.
-- `/report`: Final PDF report detailing the statistical logic and findings.
+- `/code-report`: R scripts for data cleaning, EDA, and GAM fitting; final report detailing the statistical logic and findings.
+- `/data`: data used in this project.
 - `README.md`: Project summary and quick-start guide.
 
 ## Quick Start
