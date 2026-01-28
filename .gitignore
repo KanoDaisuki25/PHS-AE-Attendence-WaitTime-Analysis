@@ -47,3 +47,24 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# --- CUSTOM ADDITIONS ---
+
+# 1. Block the "Exploration" Data
+*.csv
+*.xlsx
+
+!data/monthly_ae_activity_202404.csv
+!data/opendata_monthly_ae_demographics_202404.csv
+
+
+data/*
+!data/monthly_ae_activity_202404.csv
+!data/opendata_monthly_ae_demographics_202404.csv
+
+# 2. Mac-specific system files
+.DS_Store
+
+# 3. PDFProtection
+*.pdf
+!report/A&E_Billy.pdf
