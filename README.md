@@ -3,7 +3,7 @@
 ## Project Overview
 This project investigates the monthly demand and performance of Accident and Emergency (A&E) departments across Scotland. Following the 2007 Scottish Government national standard, 95% of patients should be seen within four hours. This analysis uses **Generalised Additive Models (GAMs)** to decompose seasonal trends, account for COVID-19 disruptions, and provide 6-month forecasts.
 
-## Key Technical Achievements
+## Key Achievements
 
 - **High Explanatory Power**: The final models explained **90.9%** of the deviance in total attendances and **96.1%** of the deviance in wait-time percentages.
 
@@ -63,4 +63,71 @@ The model predicts a fluctuating trend for 2024, with total attendances remainin
 - `/report`: Final PDF report detailing the statistical logic and findings.
 - `README.md`: Project summary and quick-start guide.
 
+## Quick Start
 
+```{r}
+# Prepare data for the third model of Attendance
+
+agg_mae_2007_Attend3 <- mae_2007_Attend |> 
+  # 1. Aggregate total attendances 
+  summarise(TAttendEp = sum(AttendEp)) |>
+
+  # 2. Define COVID-19 period and Quarterly factors
+  mutate(
+    CovidPeriod = factor(ifelse(Month >= covid_start & Month <= covid_end, 1, 0), 
+                         levels = c(0, 1)),
+    Quarter = factor(quarter(Month), levels = c(1, 2, 3, 4))
+  ) |> 
+  
+  # 3. Generate autoregressive lag terms
+  mutate(
+    Lag1 = lag(TAttendEp, 1),
+    Lag2 = lag(TAttendEp, 2),
+    Lag3 = lag(TAttendEp, 3)
+  ) |> 
+  
+  # 4. Create time and seasonal predictors
+  mutate(
+    Time = as.numeric(Month) - min(as.numeric(Month)),
+    nMonth = month(Month)
+  )
+
+# Training and test sets
+train_data3 <- agg_mae_2007_Attend3 |> filter(Month < yearmonth("2023 Nov"))
+test_data3 <- agg_mae_2007_Attend3 |> filter(Month >= yearmonth("2023 Nov"))
+
+# Define the GAM model with additional seasonal components
+gam_model3 <- gam(TAttendEp ~ s(Time, bs = "cs", k = 20) + 
+                    s(nMonth, bs = "cc", k = 12) + 
+                    s(Time, by = CovidPeriod, k = 10) + 
+                    Lag1 + Lag2 + Lag3 + CovidPeriod +
+                    Quarter,
+                  data = train_data3)
+
+# Predict: training
+train_data3 <- train_data3 |>
+  mutate(Fitted = predict(gam_model3, newdata = train_data3))
+
+# Predict: testing 
+test_data3 <- test_data3 |>
+  mutate(Predicted = predict(gam_model3, newdata = test_data3))
+
+
+# Plot the results for the third model
+ggplot() +
+  geom_line(data = train_data3, aes(x = Month, y = TAttendEp, 
+                                    color = "Actual"), size = 1) +
+  geom_line(data = train_data3, aes(x = Month, y = Fitted, 
+                                    color = "Fitted"), size = 1) +
+  geom_line(data = test_data3, aes(x = Month, y = TAttendEp, 
+                                   color = "Actual"), size = 1)  +
+  geom_line(data = test_data3, aes(x = Month, y = Predicted, 
+                                   color = "Predicted"), size = 1) +
+  labs(title = "Monthly Attendances: Fitted vs Predicted vs Actual",
+       y = "Attendances",
+       x = "Month") +
+  scale_color_manual(name = "Type", values = c("Actual" = "black", 
+                                               "Fitted" = "blue", 
+                                               "Predicted" = "green")) +
+  theme_minimal()
+```
